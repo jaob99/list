@@ -1,2 +1,2 @@
 # list_t
-Dynamically allocating list type for C with various functionality (tested on Linux and MinGW).
+Dynamically allocating linked block list type for C with various functionality (tested on GNU/Linux and MinGW).

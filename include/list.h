@@ -52,6 +52,7 @@ typedef int (*_l_comparator)(const list_t*, int,int);				/** Takes (list), (i1),
 typedef void (*_l_action)(const list_t*, int);						/** Takes (list), (index) **/
 
 /* Functions */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -59,7 +60,7 @@ extern "C" {
 list_t*	l_create(size_t type,int blocksize);						/** Allocates new list_t aligned to size <type> (e.g. "sizeof(int)"), and first block with <blocksize> (use l_create_d(size_t) to use default blocksize) **/
 list_t* l_create_from(void* from, int items, size_t type, int bs);	/** Allocates new list_t and copies elements from <from> into it **/
 void	l_destroy(list_t *t);										/** Frees all memory alocated to <t> and then frees <t> **/
-void	l_add(list_t *t, const void* o);							/** Adds new element at end of array with copy of data at <o>, then updates ->length pointer **/
+int		l_add(list_t *t, const void* o);							/** Adds new element at end of array with copy of data at <o>, then updates ->length pointer and returns index of new element **/
 void*	l_get(const list_t *t, int index);							/** Returns pointer to element at <index> **/
 void	l_nullify(list_t *t, int index);							/** Writes over element at <index> with 0s (bytes) **/
 void 	l_copy(const list_t* src,int so,list_t* de, int o,int len);	/** Copies <len> elements from <src> (offset by <so>) to <de> (offset by <o>) **/
@@ -74,7 +75,11 @@ void 	l_swap(list_t *t, int index1, int index2);					/** Swap elements at <index
 void 	l_sort(list_t *t, _l_sort_alg alg, _l_comparator comp);		/** Sorts <t> with algorithm <alg> using comparator <comp> **/
 list_t* l_clone(const list_t *t);									/** Creates new list from <t> **/
 list_t* l_clone_if(const list_t *t, _l_predicate f);				/** Creates new list from <t> with all elements that satisfy <f> **/
-	
+int 	l_count(const list_t *t, _l_predicate f);					/** Count all elements that satisfy <f>, or all if <f> is NULL **/
+void*	l_push(list_t *t, const void* o);							/** Adds new element at end of <t>, updates ->length, and returns pointer to element **/
+int 	l_pop(list_t *t, void* pop_into);							/** Removes last element after copying it into <pop_into> (if not NULL), then updates ->length and returns new length. returns -1 if ->length is 0 **/
+void*	l_pop_n(list_t *t);											/** Copies last element into newly malloc'd memory and calls l_pop, returns pointer to new memory. returns NULL if ->length is 0 **/
+
 l_iterator	li_create(list_t *list);								/** Creates iterator from <list> and initialises at index 0 **/
 int			li_next(l_iterator *it);								/** Updates current element and increments pointer in <it> and returns non-zero if index is in bounds **/
 void* 		li_get(l_iterator *i);									/** Updates and returns current element of iterator, or NULL if not in bounds **/

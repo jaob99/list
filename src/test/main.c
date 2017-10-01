@@ -9,7 +9,7 @@ void p_show_sorted(const list_t *list);
 int main()
 {
 	list_t *list;
-	int size=100;
+	int size=10;
 	int i;
 	l_iterator iter;
 	
@@ -23,6 +23,7 @@ int main()
 	}
 	
 	p_show_sorted(list);
+	
 	
 	/* Create iterator */
 	iter = li_create(list);

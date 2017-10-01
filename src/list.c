@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stdarg.h>
 
 #include <list.h>
 
@@ -114,7 +115,7 @@ static l_block* _l_last_block(l_block* b0)
 	return b0;
 }*/ /** currently unused **/
 
-void l_add(list_t *t,const void* o)
+int l_add(list_t *t,const void* o)
 {
 	int real_i = t->length%t->blocksize;
 	int block_skip = t->length/t->blocksize;
@@ -129,6 +130,7 @@ void l_add(list_t *t,const void* o)
 		wbl = _l_block_skip(t->block0, block_skip);
 	memcpy(_l_at(wbl, t->type, real_i), o, t->type);
 	t->length+=1;
+	return t->length-1;
 }
 
 void l_nullify(list_t *t, int index)
@@ -264,6 +266,54 @@ list_t* l_clone_if(const list_t *t , _l_predicate f)
 	for(;i<t->length;i++)
 		if(f(t, i)) l_add(n, l_get(t,i));
 	return n;
+}
+
+int l_count(const list_t *t, _l_predicate f)
+{
+	register int i=0;
+	int r=0;
+	if(f==NULL) return t->length;
+	else 
+		for(;i<t->length;i++)
+			r += !!f(t,i);
+	return r;
+}
+
+void *l_push(list_t *t, const void* data)
+{
+	return l_get(t, l_add(t,data));
+}
+
+int l_pop(list_t *t, void* pop_into)
+{
+	if(t->length>0) {
+		int real_i = (t->length-1)%t->blocksize;
+		int block_skip = (t->length-1)/t->blocksize;
+		l_block *wbl= _l_block_skip(t->block0, block_skip);
+		
+		if(pop_into!=NULL)
+			memcpy(pop_into, _l_at(wbl, t->type, real_i), t->type);
+		
+		if(real_i==0 && block_skip>0)
+		{
+			l_block *last = _l_block_skip(t->block0, block_skip-1);
+			free(wbl);
+			last->next = NULL;
+		}
+		
+		t->length-=1;
+		
+		return t->length;
+	} else return -1;
+}
+
+void* l_pop_n(list_t *t)
+{
+	if(t->length>0) {
+		void* new = malloc(t->type);
+		l_pop(t, new);
+		return new;
+	} else return NULL;
 }
 
 /* Iterator stuff */
