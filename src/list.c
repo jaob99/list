@@ -232,13 +232,20 @@ void l_do(list_t *t, _l_action act)
 		act(t, i);
 }
 
+void l_swap_e(list_t *t, void* temp, int index1, int index2)
+{
+	if(temp==NULL) l_swap(t,index1,index2);
+	else {
+		memcpy(temp, l_get(t, index1), t->type);
+		memcpy(l_get(t, index1), l_get(t,index2), t->type);
+		memcpy(l_get(t,index2), temp, t->type);
+	}
+}
 
 void l_swap(list_t *t, int index1, int index2)
 {
 	void* temp = malloc(t->type);
-	memcpy(temp, l_get(t, index1), t->type);
-	memcpy(l_get(t, index1), l_get(t,index2), t->type);
-	memcpy(l_get(t,index2), temp, t->type);
+	l_swap_e(t, temp, index1,index2);	
 	free(temp);
 }
 
@@ -314,6 +321,17 @@ void* l_pop_n(list_t *t)
 		l_pop(t, new);
 		return new;
 	} else return NULL;
+}
+
+void l_reverse(list_t *t)
+{
+	register int i=0;
+	void* temp = malloc(t->type);
+	for(;i<t->length/2;i++)
+	{
+		l_swap_e(t,temp, i, t->length-(1+i));
+	}
+	free(temp);
 }
 
 /* Iterator stuff */

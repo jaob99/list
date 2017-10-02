@@ -10,6 +10,8 @@
 /* Functional Macros */
 
 #define l_create_d(type) l_create(type, L_DEFAULT_BLOCKSIZE)
+#define l_create_t(type, bs) l_create(sizeof(type), bs)
+#define l_create_td(type) l_create_d(sizeof(type))
 #define l_create_from_d(from, length, type) l_create_from(from,length, type, L_DEFAULT_BLOCKSIZE)
 #define l_get_v(list,index, type) *(type*)l_get(list,index)
 
@@ -72,6 +74,7 @@ void 	l_nullify_if(list_t *t, _l_predicate f);					/** Nullifies elements that s
 void 	l_do(list_t *t, _l_action act);								/** Calls <act> on all elements of <t> **/
 void 	l_do_if(list_t *t, _l_action act, _l_predicate f);			/** Calls <act> on elements that satisfy <f> **/
 void 	l_swap(list_t *t, int index1, int index2);					/** Swap elements at <index1> and <index2> **/
+void 	l_swap_e(list_t *t, void* temp, int index1, int index2);	/** Swap elements, using specified memory location as temp stoarge (or NULL to alloc) **/
 void 	l_sort(list_t *t, _l_sort_alg alg, _l_comparator comp);		/** Sorts <t> with algorithm <alg> using comparator <comp> **/
 list_t* l_clone(const list_t *t);									/** Creates new list from <t> **/
 list_t* l_clone_if(const list_t *t, _l_predicate f);				/** Creates new list from <t> with all elements that satisfy <f> **/
@@ -79,13 +82,13 @@ int 	l_count(const list_t *t, _l_predicate f);					/** Count all elements that s
 void*	l_push(list_t *t, const void* o);							/** Adds new element at end of <t>, updates ->length, and returns pointer to element **/
 int 	l_pop(list_t *t, void* pop_into);							/** Removes last element after copying it into <pop_into> (if not NULL), then updates ->length and returns new length. returns -1 if ->length is 0 **/
 void*	l_pop_n(list_t *t);											/** Copies last element into newly malloc'd memory and calls l_pop, returns pointer to new memory. returns NULL if ->length is 0 **/
+void 	l_reverse(list_t *t);										/** Reverse all elements in array **/
 
 l_iterator	li_create(list_t *list);								/** Creates iterator from <list> and initialises at index 0 **/
 int			li_next(l_iterator *it);								/** Updates current element and increments pointer in <it> and returns non-zero if index is in bounds **/
 void* 		li_get(l_iterator *i);									/** Updates and returns current element of iterator, or NULL if not in bounds **/
 void*		li_iterate(l_iterator *i);								/** Updates and returns current element of iterator and increments pointer, or returns NULL if not in bounds **/
 void*		li_set(l_iterator *i,int index);						/** Sets current index to <index> then updates and returns current element, or NULL if index is not in bounds **/
-
 
 /* Predefined Predicates */
 
